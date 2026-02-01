@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useCart } from "@/components/providers/CartProvider";
 import { ShoppingCart, Tag, Clock } from "lucide-react";
 import Link from "next/link";
+import ProductCard from "@/components/product/ProductCard";
 
 interface Product {
     _id: string;
@@ -12,7 +13,8 @@ interface Product {
     price: number;
     category: string;
     description: string;
-    image: string;
+    images: string[];
+    image?: string;
     stock: number;
     isDeal: boolean;
 }
@@ -69,46 +71,7 @@ export default function DealsPage() {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {deals.map((product) => (
-                            <div key={product._id} className="bg-white rounded-2xl border border-red-100 shadow-sm overflow-hidden hover:shadow-xl hover:shadow-red-500/10 transition-all group relative">
-                                {/* Badge promo */}
-                                <div className="absolute top-4 left-4 z-10 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
-                                    <Tag className="w-3 h-3" /> PROMO
-                                </div>
-
-                                <div className="aspect-square relative bg-gray-100 overflow-hidden">
-                                    {product.image && (
-                                        <Image
-                                            src={product.image}
-                                            alt={product.name}
-                                            fill
-                                            className="object-cover group-hover:scale-110 transition-transform duration-500"
-                                        />
-                                    )}
-                                    {product.stock <= 0 && (
-                                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                                            <span className="text-white font-bold px-4 py-2 border-2 border-white rounded-full">Épuisé</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="p-5">
-                                    <h3 className="font-bold text-gray-900 mb-1 text-lg truncate">{product.name}</h3>
-                                    <p className="text-gray-500 text-sm mb-4 line-clamp-2">{product.description}</p>
-
-                                    <div className="flex items-center justify-between mt-auto">
-                                        <div className="flex flex-col">
-                                            <span className="text-xs text-red-500 font-bold line-through">${(product.price * 1.2).toFixed(2)}</span>
-                                            <span className="text-xl font-bold text-gray-900">${product.price}</span>
-                                        </div>
-                                        <button
-                                            onClick={() => addToCart(product)}
-                                            disabled={product.stock <= 0}
-                                            className="p-3 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-full hover:shadow-lg hover:shadow-red-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
-                                        >
-                                            <ShoppingCart className="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            <ProductCard key={product._id} product={product} />
                         ))}
                     </div>
                 )}

@@ -75,7 +75,7 @@ export default function CartSidebar() {
                                         </div>
                                         <div className="flex-1 flex flex-col justify-between">
                                             <div className="flex justify-between items-start">
-                                                <h3 className="font-semibold text-gray-900 line-clamp-2 text-sm">{item.product.name}</h3>
+                                                <h3 className="font-semibold text-gray-600 line-clamp-2 text-sm">{item.product.name}</h3>
                                                 <button
                                                     onClick={() => removeFromCart(item.product._id)}
                                                     className="text-gray-400 hover:text-red-500 transition-colors p-1"
@@ -91,7 +91,7 @@ export default function CartSidebar() {
                                                     >
                                                         <Minus className="w-3 h-3" />
                                                     </button>
-                                                    <span className="text-base font-black w-6 text-center text-gray-700">{item.quantity}</span>
+                                                    <span className="text-base font-black w-6 text-center text-black">{item.quantity}</span>
                                                     <button
                                                         onClick={() => {
                                                             if (item.quantity < item.product.stock) {

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useCart } from "@/components/providers/CartProvider";
 import { ShoppingCart, Filter, Search } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import ProductCard from "@/components/product/ProductCard";
 
 interface Product {
     _id: string;
@@ -12,7 +13,8 @@ interface Product {
     price: number;
     category: string;
     description: string;
-    image: string;
+    images: string[];
+    image?: string;
     stock: number;
 }
 
@@ -117,41 +119,7 @@ function ShopContent() {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {filteredProducts.map((product) => (
-                            <div key={product._id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all group">
-                                <div className="aspect-square relative bg-gray-100 overflow-hidden">
-                                    {product.image && (
-                                        <Image
-                                            src={product.image}
-                                            alt={product.name}
-                                            fill
-                                            className="object-cover group-hover:scale-110 transition-transform duration-500"
-                                        />
-                                    )}
-                                    {product.stock <= 0 && (
-                                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                                            <span className="text-white font-bold px-4 py-2 border-2 border-white rounded-full">Épuisé</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="p-5">
-                                    <div className="text-xs font-semibold text-purple-600 mb-2 uppercase tracking-wide">
-                                        {product.category}
-                                    </div>
-                                    <h3 className="font-bold text-gray-900 mb-1 text-lg truncate">{product.name}</h3>
-                                    <p className="text-gray-500 text-sm mb-4 line-clamp-2">{product.description}</p>
-
-                                    <div className="flex items-center justify-between mt-auto">
-                                        <span className="text-xl font-bold text-gray-900">${product.price}</span>
-                                        <button
-                                            onClick={() => addToCart(product)}
-                                            disabled={product.stock <= 0}
-                                            className="p-3 bg-black text-white rounded-full hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95 shadow-lg shadow-black/20"
-                                        >
-                                            <ShoppingCart className="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            <ProductCard key={product._id} product={product} />
                         ))}
                     </div>
                 )}

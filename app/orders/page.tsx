@@ -11,7 +11,8 @@ interface Order {
     items: {
         product: {
             name: string;
-            image: string;
+            images: string[];
+            image?: string;
             price: number;
         };
         quantity: number;
@@ -109,7 +110,14 @@ export default function UserOrdersPage() {
                                             {order.items.map((item, i) => (
                                                 <div key={i} className="flex gap-4 items-center">
                                                     <div className="w-16 h-16 bg-gray-100 rounded-lg relative overflow-hidden flex-shrink-0 border border-gray-100">
-                                                        {item.product?.image && <Image src={item.product.image} alt="" fill className="object-cover" />}
+                                                        {(item.product?.images?.[0] || item.product?.image) && (
+                                                            <Image
+                                                                src={(item.product.images?.[0] || item.product.image) as string}
+                                                                alt=""
+                                                                fill
+                                                                className="object-cover"
+                                                            />
+                                                        )}
                                                     </div>
                                                     <div className="flex-1">
                                                         <p className="font-semibold text-gray-900 line-clamp-1">{item.product?.name || "Produit supprimé"}</p>

@@ -37,7 +37,7 @@ export default function CartSidebar() {
                         <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
                             <div className="flex items-center gap-2">
                                 <ShoppingBag className="w-5 h-5 text-purple-600" />
-                                <h2 className="font-bold text-lg text-gray-900">Mon Panier ({cart.length})</h2>
+                                <h2 className="font-bold text-lg text-gray-700">Mon Panier ({cart.length})</h2>
                             </div>
                             <button
                                 onClick={() => setIsCartOpen(false)}
@@ -91,7 +91,7 @@ export default function CartSidebar() {
                                                     >
                                                         <Minus className="w-3 h-3" />
                                                     </button>
-                                                    <span className="text-base font-black w-6 text-center text-gray-700">{item.quantity}</span>
+                                                    <span className="text-base font-black w-6 text-center text-black">{item.quantity}</span>
                                                     <button
                                                         onClick={() => {
                                                             if (item.quantity < item.product.stock) {

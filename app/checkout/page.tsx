@@ -5,7 +5,7 @@ import { useCart } from "@/components/providers/CartProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { CreditCard, Truck, CheckCircle } from "lucide-react";
+import { CreditCard, Truck, CheckCircle, Upload } from "lucide-react";
 
 export default function CheckoutPage() {
     const { cart, cartTotal, clearCart } = useCart();
@@ -20,6 +20,7 @@ export default function CheckoutPage() {
         postalCode: "",
         country: "France",
     });
+    const [paymentFile, setPaymentFile] = useState<File | null>(null);
 
     useEffect(() => {
         if (!authLoading && !isAuthenticated) {
@@ -31,15 +32,38 @@ export default function CheckoutPage() {
     }, [authLoading, isAuthenticated, cart, router, step]);
 
     const handleCreateOrder = async () => {
+        if (!paymentFile) {
+            alert("Veuillez télécharger une preuve de paiement (screenshot).");
+            return;
+        }
+
         setLoading(true);
         try {
+            // 1. Upload Payment Proof
+            const uploadData = new FormData();
+            uploadData.append("file", paymentFile);
+
+            const uploadRes = await fetch("/api/upload", {
+                method: "POST",
+                body: uploadData,
+            });
+            const uploadJson = await uploadRes.json();
+
+            if (!uploadRes.ok) {
+                throw new Error("Failed to upload payment proof");
+            }
+
+            const paymentProofUrl = uploadJson.url;
+
+            // 2. Create Order
             const res = await fetch("/api/orders", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     items: cart,
                     totalAmount: cartTotal,
-                    shippingAddress: shipping
+                    shippingAddress: shipping,
+                    paymentProof: paymentProofUrl
                 }),
             });
 
@@ -51,7 +75,7 @@ export default function CheckoutPage() {
             }
         } catch (error) {
             console.error(error);
-            alert("Erreur de connexion.");
+            alert("Erreur lors du traitement de la commande.");
         } finally {
             setLoading(false);
         }
@@ -137,9 +161,10 @@ export default function CheckoutPage() {
                                             onChange={e => setShipping({ ...shipping, country: e.target.value })}
                                         >
                                             <option value="France">France</option>
-                                            <option value="Belgique">Belgique</option>
-                                            <option value="Suisse">Suisse</option>
-                                            <option value="Canada">Canada</option>
+                                            <option value="USA">USA</option>
+                                            <option value="UAE">UAE</option>
+                                            <option value="Mauritanie">Mauritanie</option>
+                                            <option value="Angola">Angola</option>
                                         </select>
                                     </div>
 
@@ -171,12 +196,47 @@ export default function CheckoutPage() {
 
                             {step === 2 && (
                                 <div className="ml-14 max-w-lg">
-                                    <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 flex items-center gap-4 mb-6 opacity-70 cursor-not-allowed">
-                                        <CreditCard className="w-6 h-6 text-gray-500" />
-                                        <div>
-                                            <p className="font-semibold text-gray-900">Carte Bancaire (Simulé)</p>
-                                            <p className="text-sm text-gray-500">Aucun débit ne sera effectué</p>
-                                        </div>
+                                    <div className="bg-purple-50 border border-purple-100 rounded-xl p-4 mb-6">
+                                        <p className="font-semibold text-purple-900 mb-2">Instructions de paiement</p>
+                                        <p className="text-sm text-purple-800 mb-4">
+                                            Veuillez effectuer votre virement/paiement via votre application bancaire, puis téléchargez une capture d'écran (screenshot) ci-dessous comme preuve.
+                                        </p>
+
+                                        <label className="block w-full cursor-pointer">
+                                            <div className="flex flex-col items-center justify-center w-full h-32 border-2 border-purple-300 border-dashed rounded-lg bg-white hover:bg-purple-50 transition-colors">
+                                                {paymentFile ? (
+                                                    <div className="relative w-full h-full p-2 flex items-center justify-center">
+                                                        <Image
+                                                            src={URL.createObjectURL(paymentFile)}
+                                                            alt="Payment Proof"
+                                                            fill
+                                                            className="object-contain"
+                                                        />
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                        <Upload className="w-8 h-8 text-purple-400 mb-2" />
+                                                        <p className="text-sm text-gray-500"><span className="font-semibold">Cliquez pour upload</span></p>
+                                                        <p className="text-xs text-gray-400">IMG, PNG, JPG</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <input
+                                                type="file"
+                                                className="hidden"
+                                                accept="image/*"
+                                                onChange={(e) => {
+                                                    if (e.target.files && e.target.files[0]) {
+                                                        setPaymentFile(e.target.files[0]);
+                                                    }
+                                                }}
+                                            />
+                                        </label>
+                                        {paymentFile && (
+                                            <p className="text-center text-xs text-green-600 font-medium mt-2">
+                                                Fichier sélectionné : {paymentFile.name}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <button
@@ -184,7 +244,7 @@ export default function CheckoutPage() {
                                         disabled={loading}
                                         className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold text-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all flex items-center justify-center gap-2"
                                     >
-                                        {loading ? "Traitement..." : `Payer $${cartTotal.toFixed(2)}`}
+                                        {loading ? "Envoi de la preuve..." : `Confirmer le paiement`}
                                     </button>
                                     <button onClick={() => setStep(1)} className="mt-4 text-gray-500 hover:text-black w-full text-center">Retour</button>
                                 </div>
@@ -200,7 +260,14 @@ export default function CheckoutPage() {
                                 {cart.map((item) => (
                                     <div key={item.product._id} className="flex gap-4">
                                         <div className="w-16 h-16 bg-gray-100 rounded-lg relative overflow-hidden flex-shrink-0">
-                                            {item.product.image && <Image src={item.product.image} alt={item.product.name} fill className="object-cover" />}
+                                            {(item.product.images?.[0] || item.product.image) && (
+                                                <Image
+                                                    src={item.product.images?.[0] || item.product.image}
+                                                    alt={item.product.name}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            )}
                                         </div>
                                         <div className="flex-1">
                                             <p className="font-medium text-gray-900 text-sm line-clamp-2">{item.product.name}</p>

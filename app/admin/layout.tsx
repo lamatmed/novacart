@@ -10,6 +10,7 @@ import { LayoutDashboard, Package, ShoppingBag, Settings, LogOut, ArrowLeft } fr
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const { user, loading, isAuthenticated } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
     useEffect(() => {
@@ -34,7 +35,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { name: 'Commandes', href: '/admin/orders', icon: ShoppingBag },
     ];
 
-    const pathname = usePathname();
+
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col md:flex-row">

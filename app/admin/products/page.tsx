@@ -10,7 +10,8 @@ interface Product {
     price: number;
     category: string;
     stock: number;
-    image: string;
+    images: string[];
+    image?: string;
     isDeal: boolean;
 }
 
@@ -18,7 +19,7 @@ export default function AdminProductsPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [editingId, setEditingId] = useState<string | null>(null);
 
     // Form State
@@ -26,8 +27,8 @@ export default function AdminProductsPage() {
         name: "",
         description: "",
         price: "",
-        category: "Clothing",
-        image: "",
+        category: "Electronics",
+        images: [] as string[],
         stock: "",
         isDeal: false,
     });
@@ -46,21 +47,21 @@ export default function AdminProductsPage() {
         e.preventDefault();
         setIsLoading(true);
         try {
-            let imageUrl = formData.image;
+            let imageUrls = [...formData.images];
 
-            // Handle Image Upload
-            if (selectedFile) {
-                const uploadData = new FormData();
-                uploadData.append("file", selectedFile);
-                const uploadRes = await fetch("/api/upload", {
-                    method: "POST",
-                    body: uploadData,
-                });
-                const uploadJson = await uploadRes.json();
-                if (uploadRes.ok) {
-                    imageUrl = uploadJson.url;
-                } else {
-                    throw new Error("Image upload failed");
+            // Handle Image Uploads
+            if (selectedFiles.length > 0) {
+                for (const file of selectedFiles) {
+                    const uploadData = new FormData();
+                    uploadData.append("file", file);
+                    const uploadRes = await fetch("/api/upload", {
+                        method: "POST",
+                        body: uploadData,
+                    });
+                    const uploadJson = await uploadRes.json();
+                    if (uploadRes.ok) {
+                        imageUrls.push(uploadJson.url);
+                    }
                 }
             }
 
@@ -70,7 +71,7 @@ export default function AdminProductsPage() {
             const res = await fetch(url, {
                 method,
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...formData, image: imageUrl }),
+                body: JSON.stringify({ ...formData, images: imageUrls }),
             });
             if (res.ok) {
                 setIsModalOpen(false);
@@ -91,7 +92,7 @@ export default function AdminProductsPage() {
             description: product.description,
             price: product.price,
             category: product.category,
-            image: product.image,
+            images: product.images || (product.image ? [product.image] : []),
             stock: product.stock,
             isDeal: product.isDeal || false,
         });
@@ -109,8 +110,8 @@ export default function AdminProductsPage() {
     };
 
     const resetForm = () => {
-        setFormData({ name: "", description: "", price: "", category: "Clothing", image: "", stock: "", isDeal: false });
-        setSelectedFile(null);
+        setFormData({ name: "", description: "", price: "", category: "Electronics", images: [], stock: "", isDeal: false });
+        setSelectedFiles([]);
         setEditingId(null);
     };
 
@@ -155,8 +156,17 @@ export default function AdminProductsPage() {
                             products.map((product) => (
                                 <tr key={product._id} className="hover:bg-gray-50 transition-colors">
                                     <td className="px-6 py-4 flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-lg bg-gray-100 relative overflow-hidden">
-                                            {product.image && <Image src={product.image} alt={product.name} fill className="object-cover" />}
+                                        <div className="w-10 h-10 rounded-lg bg-gray-100 relative overflow-hidden group">
+                                            {product.images && product.images[0] ? (
+                                                <Image src={product.images[0]} alt={product.name} fill className="object-cover" />
+                                            ) : product.image ? (
+                                                <Image src={product.image} alt={product.name} fill className="object-cover" />
+                                            ) : null}
+                                            {product.images && product.images.length > 1 && (
+                                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-[10px] font-bold">
+                                                    +{product.images.length - 1}
+                                                </div>
+                                            )}
                                         </div>
                                         <div>
                                             <span className="font-medium text-gray-900 block">{product.name}</span>
@@ -267,27 +277,80 @@ export default function AdminProductsPage() {
                                 </label>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Image du produit</label>
-                                <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer hover:bg-gray-50 transition-colors relative">
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                        onChange={(e) => {
-                                            if (e.target.files?.[0]) {
-                                                setSelectedFile(e.target.files[0]);
-                                            }
-                                        }}
-                                    />
-                                    <div className="flex flex-col items-center gap-2">
-                                        <Upload className="w-8 h-8 text-gray-400" />
-                                        <p className="text-sm text-gray-500">
-                                            {selectedFile ? selectedFile.name : "Cliquez ou glissez une image ici"}
-                                        </p>
-                                    </div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Images du produit ({formData.images.length} actuelles)</label>
+                            <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer hover:bg-gray-50 transition-colors relative">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    onChange={(e) => {
+                                        if (e.target.files) {
+                                            // Append new files to existing selection
+                                            setSelectedFiles(prev => [...prev, ...Array.from(e.target.files!)]);
+                                        }
+                                    }}
+                                />
+                                <div className="flex flex-col items-center gap-2">
+                                    <Upload className="w-8 h-8 text-gray-400" />
+                                    <p className="text-sm text-gray-500">
+                                        Cliquez pour ajouter des images
+                                    </p>
                                 </div>
                             </div>
+
+                            {/* Preview of NEW selected files */}
+                            {selectedFiles.length > 0 && (
+                                <div className="space-y-2">
+                                    <p className="text-xs font-semibold text-gray-500 uppercase">Nouvelles images ({selectedFiles.length})</p>
+                                    <div className="flex gap-2 overflow-x-auto pb-2">
+                                        {selectedFiles.map((file, idx) => (
+                                            <div key={idx} className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border border-gray-200 group">
+                                                <Image
+                                                    src={URL.createObjectURL(file)}
+                                                    alt="Preview"
+                                                    fill
+                                                    className="object-cover"
+                                                    onLoadingComplete={() => {
+                                                        // URL.revokeObjectURL(url) - memory cleanup if possible, but tricky in map
+                                                    }}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setSelectedFiles(prev => prev.filter((_, i) => i !== idx))}
+                                                    className="absolute top-0 right-0 bg-red-500 text-white p-0.5 rounded-bl opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity"
+                                                >
+                                                    <Trash2 className="w-3 h-3" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Preview of existing images */}
+                            {formData.images.length > 0 && (
+                                <div className="space-y-2">
+                                    <p className="text-xs font-semibold text-gray-500 uppercase">Images existantes ({formData.images.length})</p>
+                                    <div className="flex gap-2 overflow-x-auto pb-2">
+                                        {formData.images.map((img, idx) => (
+                                            <div key={idx} className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border border-gray-200 group">
+                                                <Image src={img} alt="" fill className="object-cover" />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setFormData({
+                                                        ...formData,
+                                                        images: formData.images.filter((_, i) => i !== idx)
+                                                    })}
+                                                    className="absolute top-0 right-0 bg-red-500 text-white p-0.5 rounded-bl opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity"
+                                                >
+                                                    <Trash2 className="w-3 h-3" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="flex gap-3 pt-4">
                                 <button

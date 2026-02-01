@@ -28,6 +28,15 @@ async function connectToDatabase() {
     }
 
     if (!cached.promise) {
+        // Build hack: Force Google DNS to resolve MongoDB connection issues
+        try {
+            const dns = await import('dns');
+            dns.setServers(['8.8.8.8', '8.8.4.4']);
+            console.log("DNS servers set to Google DNS (8.8.8.8)");
+        } catch (err) {
+            console.error("Failed to set custom DNS:", err);
+        }
+
         const opts = {
             bufferCommands: false,
             family: 4, // Force IPv4

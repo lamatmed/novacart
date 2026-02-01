@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function POST(req: Request) {
     try {
@@ -11,26 +16,22 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "No file received." }, { status: 400 });
         }
 
-        const buffer = Buffer.from(await file.arrayBuffer());
-        const filename = Date.now() + "_" + file.name.replaceAll(" ", "_");
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
 
-        // Ensure directory exists
-        const uploadDir = path.join(process.cwd(), "public/uploads");
-        try {
-            await mkdir(uploadDir, { recursive: true });
-        } catch (e) {
-            // Ignore if exists
-        }
+        const result = await new Promise<any>((resolve, reject) => {
+            cloudinary.uploader.upload_stream(
+                { folder: "novacart_products" },
+                (error, result) => {
+                    if (error) reject(error);
+                    else resolve(result);
+                }
+            ).end(buffer);
+        });
 
-        const filepath = path.join(uploadDir, filename);
-        await writeFile(filepath, buffer);
-
-        // Return the path relative to the public folder
-        const fileUrl = `/uploads/${filename}`;
-
-        return NextResponse.json({ url: fileUrl, success: true });
+        return NextResponse.json({ url: result.secure_url, success: true });
     } catch (error) {
-        console.error("Error uploading file:", error);
+        console.error("Error uploading to Cloudinary:", error);
         return NextResponse.json({ error: "Failed to upload file." }, { status: 500 });
     }
 }

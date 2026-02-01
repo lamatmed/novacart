@@ -13,7 +13,8 @@ interface Order {
     items: {
         product: {
             name: string;
-            image: string;
+            images: string[];
+            image?: string;
             price: number;
         };
         quantity: number;
@@ -25,6 +26,7 @@ interface Order {
         city: string;
         country: string;
     };
+    paymentProof?: string;
 }
 
 export default function AdminOrdersPage() {
@@ -32,6 +34,7 @@ export default function AdminOrdersPage() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
+    const [selectedProof, setSelectedProof] = useState<string | null>(null);
 
     useEffect(() => {
         fetchOrders();
@@ -104,7 +107,7 @@ export default function AdminOrdersPage() {
                     <p className="text-gray-500">Gérer les achats clients</p>
                 </div>
 
-                <div className="flex gap-4 w-full sm:w-auto">
+                <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                     <div className="relative flex-1 sm:w-64">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                         <input
@@ -130,14 +133,15 @@ export default function AdminOrdersPage() {
                 </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <table className="w-full text-left">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-x-auto">
+                <table className="w-full text-left min-w-[600px] sm:min-w-0">
                     <thead className="bg-gray-50 border-b border-gray-100">
                         <tr>
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Commande</th>
                             <th className="hidden sm:table-cell px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Client</th>
                             <th className="hidden lg:table-cell px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Date</th>
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Total</th>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Preuve</th>
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Statut</th>
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Actions</th>
                         </tr>
@@ -155,7 +159,14 @@ export default function AdminOrdersPage() {
                                         <div className="flex -space-x-2 mt-2 overflow-hidden">
                                             {order.items.slice(0, 3).map((item, i) => (
                                                 <div key={i} className="relative w-8 h-8 rounded-full border-2 border-white bg-gray-100 overflow-hidden" title={item.product?.name}>
-                                                    {item.product?.image && <Image src={item.product.image} alt="" fill className="object-cover" />}
+                                                    {(item.product.images?.[0] || item.product.image) && (
+                                                        <Image
+                                                            src={item.product.images?.[0] || item.product.image || ""}
+                                                            alt=""
+                                                            fill
+                                                            className="object-cover"
+                                                        />
+                                                    )}
                                                 </div>
                                             ))}
                                             {order.items.length > 3 && (
@@ -175,6 +186,24 @@ export default function AdminOrdersPage() {
                                     </td>
                                     <td className="px-6 py-4 font-bold text-gray-900">
                                         ${order.totalAmount.toFixed(2)}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {order.paymentProof ? (
+                                            <div
+                                                onClick={() => setSelectedProof(order.paymentProof!)}
+                                                className="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"
+                                                title="Cliquez pour agrandir"
+                                            >
+                                                <Image
+                                                    src={order.paymentProof}
+                                                    alt="Preuve"
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            </div>
+                                        ) : (
+                                            <span className="text-gray-300 text-xs italic">Aucune</span>
+                                        )}
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border whitespace-nowrap ${getStatusColor(order.status)}`}>
@@ -201,6 +230,33 @@ export default function AdminOrdersPage() {
                     </tbody>
                 </table>
             </div>
-        </div>
+
+            {/* Payment Proof Modal */}
+            {
+                selectedProof && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={() => setSelectedProof(null)}>
+                        <div className="relative bg-white rounded-2xl overflow-hidden max-w-3xl w-full max-h-[90vh] shadow-2xl" onClick={e => e.stopPropagation()}>
+                            <div className="p-4 border-b border-gray-100 flex justify-between items-center">
+                                <h3 className="font-bold text-lg">Preuve de Paiement</h3>
+                                <button onClick={() => setSelectedProof(null)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                                    <XCircle className="w-6 h-6 text-gray-500" />
+                                </button>
+                            </div>
+                            <div className="relative w-full h-[60vh] bg-gray-100">
+                                <Image
+                                    src={selectedProof}
+                                    alt="Preuve de paiement"
+                                    fill
+                                    className="object-contain"
+                                />
+                            </div>
+                            <div className="p-4 border-t border-gray-100 bg-gray-50 text-center text-sm text-gray-500">
+                                Vérifiez que le montant et la date correspondent à la commande.
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+        </div >
     );
 }

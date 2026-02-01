@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import React from "react";
@@ -127,7 +126,7 @@ export default function Home() {
           <div className="flex justify-between items-end mb-12">
             <div>
               <h2 className="text-4xl font-bold tracking-tight text-gray-900 mb-3">Acheter par Catégorie</h2>
-              <p className="text-lg text-gray-800 font-medium">Explorez notre large gamme de collections premium</p>
+              <p className="text-lg text-gray- font-medium">Explorez notre large gamme de collections premium</p>
             </div>
             <Link href="/categories" className="hidden md:flex items-center gap-2 font-medium hover:underline text-gray-800">
               Voir tout <ArrowRight className="w-4 h-4" />

@@ -37,6 +37,7 @@ export async function POST(req: Request) {
         const product = await Product.create(body);
         return NextResponse.json({ message: "Product created", product }, { status: 201 });
     } catch (error) {
-        return NextResponse.json({ message: "Error creating product" }, { status: 500 });
+        console.error("Error creating product:", error);
+        return NextResponse.json({ message: "Error creating product", error: (error as Error).message }, { status: 500 });
     }
 }

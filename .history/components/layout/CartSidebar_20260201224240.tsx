@@ -83,6 +83,7 @@ export default function CartSidebar() {
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </div>
+                                            <p className="text-gray-800 text-sm">{item.product.category}</p>
                                             <div className="flex justify-between items-center mt-2">
                                                 <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-1">
                                                     <button
@@ -91,7 +92,7 @@ export default function CartSidebar() {
                                                     >
                                                         <Minus className="w-3 h-3" />
                                                     </button>
-                                                    <span className="text-base font-black w-6 text-center text-gray-700">{item.quantity}</span>
+                                                    <span className="text-sm font-semibold w-4 text-center">{item.quantity}</span>
                                                     <button
                                                         onClick={() => {
                                                             if (item.quantity < item.product.stock) {

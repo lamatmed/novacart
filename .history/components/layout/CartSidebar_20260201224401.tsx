@@ -91,7 +91,7 @@ export default function CartSidebar() {
                                                     >
                                                         <Minus className="w-3 h-3" />
                                                     </button>
-                                                    <span className="text-base font-black w-6 text-center text-gray-700">{item.quantity}</span>
+                                                    <span className="text-sm font-semibold w-4 text-center">{item.quantity}</span>
                                                     <button
                                                         onClick={() => {
                                                             if (item.quantity < item.product.stock) {
@@ -99,7 +99,7 @@ export default function CartSidebar() {
                                                             }
                                                         }}
                                                         disabled={item.quantity >= item.product.stock}
-                                                        className={`p-1 rounded-md shadow-sm transition-all ${item.quantity >= item.product.stock ? 'opacity-30 cursor-not-allowed text-gray-400' : 'hover:bg-white text-gray-600'}`}
+                                                        className={`p-1 rounded-md shadow-sm transition-all ${item.quantity >= item.product.stock ? 'opacity-30 cursor-not-allowed text-gray-800' : 'hover:bg-white text-gray-600'}`}
                                                     >
                                                         <Plus className="w-3 h-3" />
                                                     </button>

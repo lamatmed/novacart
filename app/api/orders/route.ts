@@ -29,7 +29,7 @@ export async function POST(req: Request) {
 
         await connectDB();
         const body = await req.json();
-        const { items, totalAmount, shippingAddress } = body;
+        const { items, totalAmount, shippingAddress, paymentProof } = body;
 
         if (!items || items.length === 0) {
             return NextResponse.json({ message: "Cart is empty" }, { status: 400 });
@@ -47,11 +47,13 @@ export async function POST(req: Request) {
         }
 
         // Deduct stock
-        for (const item of items) {
-            await Product.findByIdAndUpdate(item.product._id, {
-                $inc: { stock: -item.quantity }
-            });
-        }
+        // Deduct stock - MOVED TO ADMIN VALIDATION
+        // User requested: "si user passe commande en attente ne doit pas compter de stock"
+        // for (const item of items) {
+        //     await Product.findByIdAndUpdate(item.product._id, {
+        //         $inc: { stock: -item.quantity }
+        //     });
+        // }
 
         // Create Order
         const order = await Order.create({
@@ -62,7 +64,8 @@ export async function POST(req: Request) {
             })),
             totalAmount,
             shippingAddress,
-            status: 'paye' // Mocking successful payment
+            paymentProof,
+            status: 'en_attente' // Wait for admin verification
         });
 
         return NextResponse.json({ message: "Order created", order }, { status: 201 });
