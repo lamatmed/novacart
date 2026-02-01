@@ -22,6 +22,20 @@ export default function CheckoutPage() {
     });
     const [paymentFile, setPaymentFile] = useState<File | null>(null);
 
+    const currencyConfig: { [key: string]: { symbol: string, rate: number } } = {
+        "France": { symbol: "€", rate: 0.92 },
+        "USA": { symbol: "$", rate: 1 },
+        "UAE": { symbol: "AED", rate: 3.67 },
+        "Mauritanie": { symbol: "MRU", rate: 40 },
+        "Angola": { symbol: "Kz", rate: 920 }
+    };
+
+    const { symbol, rate } = currencyConfig[shipping.country] || currencyConfig["USA"];
+
+    const formatPrice = (price: number) => {
+        return `${(price * rate).toFixed(2)} ${symbol}`;
+    };
+
     useEffect(() => {
         if (!authLoading && !isAuthenticated) {
             router.push("/login?redirect=/checkout");
@@ -272,7 +286,7 @@ export default function CheckoutPage() {
                                         <div className="flex-1">
                                             <p className="font-medium text-gray-900 text-sm line-clamp-2">{item.product.name}</p>
                                             <p className="text-gray-500 text-xs">Qté: {item.quantity}</p>
-                                            <p className="font-bold text-gray-900 text-sm">${(item.product.price * item.quantity).toFixed(2)}</p>
+                                            <p className="font-bold text-gray-900 text-sm">{formatPrice(item.product.price * item.quantity)}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -281,7 +295,7 @@ export default function CheckoutPage() {
                             <div className="border-t border-gray-100 pt-4 space-y-2">
                                 <div className="flex justify-between text-gray-600">
                                     <span>Sous-total</span>
-                                    <span>${cartTotal.toFixed(2)}</span>
+                                    <span>{formatPrice(cartTotal)}</span>
                                 </div>
                                 <div className="flex justify-between text-gray-600">
                                     <span>Livraison</span>
@@ -289,7 +303,7 @@ export default function CheckoutPage() {
                                 </div>
                                 <div className="flex justify-between text-xl font-bold text-gray-900 pt-4">
                                     <span>Total</span>
-                                    <span>${cartTotal.toFixed(2)}</span>
+                                    <span>{formatPrice(cartTotal)}</span>
                                 </div>
                             </div>
                         </div>
