@@ -119,7 +119,7 @@ export default function AdminOrdersPage() {
                         />
                     </div>
                     <select
-                        className="px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-gray-800"
+                        className="px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-g"
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
                     >

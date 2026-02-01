@@ -30,6 +30,7 @@ export async function GET() {
 
         // Count total products
         const productsCount = await Product.countDocuments();
+        const usersCount = await User.countDocuments();
 
         // Count total orders
         const ordersCount = await Order.countDocuments();
@@ -73,6 +74,7 @@ export async function GET() {
             stats: {
                 products: productsCount,
                 orders: ordersCount,
+                users: usersCount,
                 revenue: totalRevenue,
                 growth
             },
