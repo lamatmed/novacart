@@ -47,7 +47,7 @@ export default function Navbar() {
             <div className="bg-gradient-to-r from-purple-600 to-pink-500 text-white text-sm py-2 px-4 text-center">
                 <div className="container mx-auto flex items-center justify-center gap-2">
                     <Sparkles className="w-4 h-4" />
-                    <span className="font-medium">Livraison gratuite</span>
+                    <span className="font-medium">Livraison gratuite dès 49€ </span>
                     <Gift className="w-4 h-4 ml-2" />
                     <span className="hidden sm:inline"> | </span>
                     <span className="hidden sm:inline">30 jours satisfait ou remboursé</span>
@@ -165,7 +165,7 @@ export default function Navbar() {
                             <input
                                 type="text"
                                 placeholder="Rechercher des produits..."
-                                className="ml-3 bg-transparent outline-none text-sm w-48 placeholder-gray-400 text-gray-800"
+                                className="ml-3 bg-transparent outline-none text-sm w-48 placeholder-gray-400"
                             />
                             <kbd className="hidden lg:inline-flex ml-2 px-2 py-1 text-xs font-semibold text-gray-500 bg-white border border-gray-200 rounded">
                                 ⌘K
@@ -305,7 +305,7 @@ export default function Navbar() {
                                 </div>
                                 <button
                                     onClick={() => setIsMobileMenuOpen(false)}
-                                    className="p-3 rounded-xl bg-gradient-to-r from-gray-300 to-gray-800"
+                                    className="p-3 rounded-xl bg-gradient-to-r from-gray-100 to-gray-200"
                                 >
                                     <X className="w-6 h-6" />
                                 </button>
@@ -318,7 +318,7 @@ export default function Navbar() {
                                     <input
                                         type="text"
                                         placeholder="Rechercher..."
-                                        className="ml-3 bg-transparent outline-none flex-1 placeholder-gray-400 text-gray-700"
+                                        className="ml-3 bg-transparent outline-none flex-1 placeholder-gray-400"
                                     />
                                 </div>
                             </div>
@@ -452,7 +452,7 @@ export default function Navbar() {
             </AnimatePresence>
 
             {/* Spacer to prevent content overlap */}
-            <div className="h-[1px]" />
+            <div className="h-[90px]" />
         </>
     );
 }

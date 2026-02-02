@@ -318,7 +318,7 @@ export default function Navbar() {
                                     <input
                                         type="text"
                                         placeholder="Rechercher..."
-                                        className="ml-3 bg-transparent outline-none flex-1 placeholder-gray-400 text-gray-700"
+                                        className="ml-3 bg-transparent outline-none flex-1 placeholder-gray-400 text-gray-5700"
                                     />
                                 </div>
                             </div>
@@ -452,7 +452,7 @@ export default function Navbar() {
             </AnimatePresence>
 
             {/* Spacer to prevent content overlap */}
-            <div className="h-[1px]" />
+            <div className="h-[90px]" />
         </>
     );
 }

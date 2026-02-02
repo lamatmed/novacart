@@ -305,7 +305,7 @@ export default function Navbar() {
                                 </div>
                                 <button
                                     onClick={() => setIsMobileMenuOpen(false)}
-                                    className="p-3 rounded-xl bg-gradient-to-r from-gray-300 to-gray-800"
+                                    className="p-3 rounded-xl bg-gradient-to-r from-gray-100 to-gray-200"
                                 >
                                     <X className="w-6 h-6" />
                                 </button>
@@ -318,7 +318,7 @@ export default function Navbar() {
                                     <input
                                         type="text"
                                         placeholder="Rechercher..."
-                                        className="ml-3 bg-transparent outline-none flex-1 placeholder-gray-400 text-gray-700"
+                                        className="ml-3 bg-transparent outline-none flex-1 placeholder-gray-400"
                                     />
                                 </div>
                             </div>
@@ -452,7 +452,7 @@ export default function Navbar() {
             </AnimatePresence>
 
             {/* Spacer to prevent content overlap */}
-            <div className="h-[1px]" />
+            <div className="h-[90px]" />
         </>
     );
 }

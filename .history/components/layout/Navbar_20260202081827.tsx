@@ -452,7 +452,7 @@ export default function Navbar() {
             </AnimatePresence>
 
             {/* Spacer to prevent content overlap */}
-            <div className="h-[1px]" />
+            <div className="h-[90px]" />
         </>
     );
 }

@@ -1,8 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useCart } from "@/components/providers/CartProvider";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -32,29 +31,29 @@ export default function Home() {
   };
 
   const categories = [
-    {
-      name: "Électronique",
+    { 
+      name: "Électronique", 
       image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&q=80&w=800",
       color: "from-blue-500/20 to-cyan-500/20",
       icon: "📱",
       products: "1200+ Produits"
     },
-    {
-      name: "Mode",
+    { 
+      name: "Mode", 
       image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w-800",
       color: "from-rose-500/20 to-pink-500/20",
       icon: "👗",
       products: "850+ Produits"
     },
-    {
-      name: "Maison & Déco",
+    { 
+      name: "Maison & Déco", 
       image: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?auto=format&fit=crop&q=80&w=800",
       color: "from-amber-500/20 to-orange-500/20",
       icon: "🏠",
       products: "950+ Produits"
     },
-    {
-      name: "Sports",
+    { 
+      name: "Sports", 
       image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=800",
       color: "from-emerald-500/20 to-green-500/20",
       icon: "⚽",
@@ -62,49 +61,44 @@ export default function Home() {
     },
   ];
 
-  const { addToCart } = useCart();
-  const [products, setProducts] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch("/api/products");
-        const data = await res.json();
-        if (data.products) {
-          setProducts(data.products);
-        }
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-    fetchProducts();
-  }, []);
-
-  const featuredProducts = products.length > 0 ? products.slice(0, 3).map(p => ({
-    id: p._id,
-    name: p.name,
-    price: `${p.price}€`,
-    originalPrice: null,
-    rating: 5,
-    image: p.images?.[0] || p.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=600',
-    badge: p.stock <= 0 ? "Épuisé" : "Nouveau",
-    fullProduct: p
-  })) : [];
+  const featuredProducts = [
+    {
+      id: 1,
+      name: "Écouteurs Sans Fil Pro",
+      price: "299€",
+      originalPrice: "399€",
+      rating: 4.8,
+      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=600",
+      badge: "TOP VENTE"
+    },
+    {
+      id: 2,
+      name: "Montre Connectée Elite",
+      price: "449€",
+      originalPrice: "599€",
+      rating: 4.9,
+      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=600",
+      badge: "NOUVEAU"
+    },
+    {
+      id: 3,
+      name: "Sac à Dos Urbain",
+      price: "129€",
+      rating: 4.7,
+      image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=600",
+      badge: "-25%"
+    },
+  ];
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-white to-gray-50/30">
       {/* Hero Section - Redesigned */}
       <section className="relative h-[90vh] w-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-purple-900 to-pink-900">
         {/* Animated Gradient Background */}
-        {/* Background Image */}
         <div className="absolute inset-0 z-0">
-          <Image src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&q=80&w=1920"
-            alt="Shopping"
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000" />
+          <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse delay-500" />
         </div>
 
         <motion.div
@@ -113,7 +107,7 @@ export default function Home() {
           animate="animate"
           variants={stagger}
         >
-          <motion.div
+          <motion.div 
             variants={fadeInUp}
             className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8 group hover:bg-white/20 transition-all"
           >
@@ -158,7 +152,7 @@ export default function Home() {
             </Link>
 
             <Link
-              href="/categories"
+              href="/collections"
               className="group px-10 py-5 bg-white/10 backdrop-blur-md border-2 border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/20 transition-all duration-300 hover:scale-105 flex items-center gap-3"
             >
               Voir les Collections
@@ -168,7 +162,7 @@ export default function Home() {
         </motion.div>
 
         {/* Floating Elements */}
-        <motion.div
+        <motion.div 
           className="absolute bottom-10 left-10 hidden lg:block"
           animate={{ y: [0, -10, 0] }}
           transition={{ repeat: Infinity, duration: 3 }}
@@ -227,8 +221,8 @@ export default function Home() {
                 Parcourez nos catégories soigneusement sélectionnées pour trouver l'inspiration parfaite.
               </p>
             </div>
-            <Link
-              href="/categories"
+            <Link 
+              href="/categories" 
               className="group flex items-center gap-2 font-bold text-gray-900 hover:text-purple-600 transition-colors px-6 py-3 rounded-full bg-gray-100 hover:bg-gray-200"
             >
               Toutes les catégories
@@ -250,9 +244,10 @@ export default function Home() {
               >
                 <Link href={`/category/${category.name.toLowerCase()}`}>
                   <div className="absolute inset-0 bg-gradient-to-br via-white/0 to-white/0 z-10" />
-                  <div className={`absolute inset-0 bg-gradient-to-br ${category.color} transition-opacity duration-500 ${hoveredCategory === index ? 'opacity-100' : 'opacity-60'
-                    }`} />
-
+                  <div className={`absolute inset-0 bg-gradient-to-br ${category.color} transition-opacity duration-500 ${
+                    hoveredCategory === index ? 'opacity-100' : 'opacity-60'
+                  }`} />
+                  
                   <Image
                     src={category.image}
                     alt={category.name}
@@ -262,20 +257,20 @@ export default function Home() {
                       transform: hoveredCategory === index ? 'scale(1.1)' : 'scale(1)',
                     }}
                   />
-
+                  
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-
+                  
                   <div className="absolute top-6 left-6 z-20">
                     <div className="text-4xl">{category.icon}</div>
                   </div>
-
+                  
                   <div className="absolute bottom-0 left-0 p-8 z-20 w-full">
                     <div className="space-y-3">
                       <h3 className="text-2xl font-bold text-white">{category.name}</h3>
                       <p className="text-white/80">{category.products}</p>
                       <div className="flex items-center gap-2">
                         <div className="flex-1 h-1 bg-white/30 rounded-full overflow-hidden">
-                          <div
+                          <div 
                             className="h-full bg-gradient-to-r from-white to-white/80 rounded-full transition-all duration-500"
                             style={{ width: hoveredCategory === index ? '100%' : '70%' }}
                           />
@@ -330,14 +325,14 @@ export default function Home() {
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                     />
-
+                    
                     {/* Badge */}
                     <div className="absolute top-4 left-4">
                       <span className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-bold rounded-full">
                         {product.badge}
                       </span>
                     </div>
-
+                    
                     {/* Action Buttons */}
                     <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow">
@@ -348,7 +343,7 @@ export default function Home() {
                       </button>
                     </div>
                   </div>
-
+                  
                   {/* Product Info */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
@@ -356,10 +351,11 @@ export default function Home() {
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
-                            className={`w-4 h-4 ${i < Math.floor(product.rating)
-                              ? 'fill-yellow-400 text-yellow-400'
-                              : 'fill-gray-200 text-gray-200'
-                              }`}
+                            className={`w-4 h-4 ${
+                              i < Math.floor(product.rating)
+                                ? 'fill-yellow-400 text-yellow-400'
+                                : 'fill-gray-200 text-gray-200'
+                            }`}
                           />
                         ))}
                         <span className="text-sm text-gray-600 ml-2">{product.rating}</span>
@@ -370,17 +366,14 @@ export default function Home() {
                         </span>
                       )}
                     </div>
-
+                    
                     <h3 className="text-xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors">
                       {product.name}
                     </h3>
-
+                    
                     <div className="flex items-center justify-between">
                       <span className="text-2xl font-bold text-gray-900">{product.price}</span>
-                      <button
-                        onClick={() => product.fullProduct && addToCart(product.fullProduct)}
-                        className="px-6 py-3 bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-full font-medium hover:shadow-lg hover:shadow-gray-900/30 transition-all hover:scale-105 flex items-center gap-2 cursor-pointer active:scale-95"
-                      >
+                      <button className="px-6 py-3 bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-full font-medium hover:shadow-lg hover:shadow-gray-900/30 transition-all hover:scale-105 flex items-center gap-2">
                         Ajouter
                         <ShoppingBag className="w-4 h-4" />
                       </button>
@@ -460,7 +453,7 @@ export default function Home() {
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
                 Rejoignez la <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">Communauté</span> NovaCart
               </h2>
-
+              
               <p className="text-gray-600 text-lg mb-10 max-w-2xl mx-auto">
                 Abonnez-vous à notre newsletter pour recevoir en avant-première nos nouveautés, offres exclusives et 15% de réduction sur votre première commande.
               </p>

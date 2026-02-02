@@ -158,7 +158,7 @@ export default function Home() {
             </Link>
 
             <Link
-              href="/categories"
+              href="/catesgories"
               className="group px-10 py-5 bg-white/10 backdrop-blur-md border-2 border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/20 transition-all duration-300 hover:scale-105 flex items-center gap-3"
             >
               Voir les Collections
