@@ -17,6 +17,44 @@ export default function Navbar() {
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
     const pathname = usePathname();
 
+    const [notifications, setNotifications] = useState<any[]>([]);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
+    useEffect(() => {
+        if (!isAuthenticated) return;
+        const fetchNotifications = async () => {
+            try {
+                const res = await fetch("/api/notifications");
+                const data = await res.json();
+                if (data.notifications) {
+                    setNotifications(data.notifications);
+                    setUnreadCount(data.unreadCount);
+                }
+            } catch (error) {
+                console.error("Error fetching notifications", error);
+            }
+        };
+        fetchNotifications();
+        // Poll every 60s
+        const interval = setInterval(fetchNotifications, 60000);
+        return () => clearInterval(interval);
+    }, [isAuthenticated]);
+
+    const markAllRead = async () => {
+        try {
+            await fetch("/api/notifications", {
+                method: "PUT",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ markAll: true }),
+            });
+            setUnreadCount(0);
+            setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+        } catch (error) {
+            console.error("Error marking read", error);
+        }
+    };
+
     // Scroll detection for glassmorphism
     useEffect(() => {
         const handleScroll = () => {
@@ -174,10 +212,56 @@ export default function Navbar() {
 
                         {/* Notifications */}
                         {isAuthenticated && (
-                            <button className="p-3 text-gray-600 hover:text-purple-600 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 rounded-xl transition-all duration-300 relative">
-                                <Bell className="w-5 h-5" />
-                                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                            </button>
+                            <div className="relative">
+                                <button
+                                    onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                                    className="p-3 text-gray-600 hover:text-purple-600 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 rounded-xl transition-all duration-300 relative"
+                                >
+                                    <Bell className="w-5 h-5" />
+                                    {unreadCount > 0 && (
+                                        <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                                    )}
+                                </button>
+
+                                <AnimatePresence>
+                                    {isNotificationsOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            className="absolute top-full right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 origin-top-right"
+                                        >
+                                            <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                                                <h3 className="font-bold text-gray-900">Notifications</h3>
+                                                {unreadCount > 0 && (
+                                                    <button onClick={markAllRead} className="text-xs text-purple-600 hover:underline font-medium">
+                                                        Tout marquer comme lu
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div className="max-h-80 overflow-y-auto">
+                                                {notifications.length === 0 ? (
+                                                    <div className="p-8 text-center text-gray-500 text-sm">
+                                                        Aucune notification.
+                                                    </div>
+                                                ) : (
+                                                    notifications.map((notif: any) => (
+                                                        <div key={notif._id} className={`p-4 border-b border-gray-50 hover:bg-gray-50 transition-colors ${!notif.read ? 'bg-purple-50/30' : ''}`}>
+                                                            <div className="flex gap-3">
+                                                                <div className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${!notif.read ? 'bg-purple-500' : 'bg-gray-300'}`} />
+                                                                <div className="flex-1">
+                                                                    <p className="text-sm text-gray-800 leading-snug mb-1">{notif.message}</p>
+                                                                    <span className="text-xs text-gray-400">{new Date(notif.createdAt).toLocaleDateString()}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ))
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
                         )}
 
                         {/* Cart */}
@@ -216,7 +300,7 @@ export default function Navbar() {
                                         </span>
                                     </div>
                                 </div>
-                                
+
                                 <div className="flex items-center gap-1">
                                     <Link
                                         href="/orders"
@@ -225,7 +309,7 @@ export default function Navbar() {
                                     >
                                         <Package className="w-5 h-5" />
                                     </Link>
-                                    
+
                                     {user?.role === "admin" && (
                                         <Link
                                             href="/admin"
@@ -239,7 +323,7 @@ export default function Navbar() {
                                             Admin
                                         </Link>
                                     )}
-                                    
+
                                     <button
                                         onClick={logout}
                                         className="p-3 text-gray-600 hover:text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 rounded-xl transition-all duration-300"
@@ -380,7 +464,7 @@ export default function Navbar() {
                                                 <Package className="w-6 h-6 text-blue-600 mb-2" />
                                                 <span className="font-semibold text-blue-600">Commandes</span>
                                             </Link>
-                                            
+
                                             {user?.role === "admin" && (
                                                 <Link
                                                     href="/admin"

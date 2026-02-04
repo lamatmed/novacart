@@ -5,6 +5,7 @@ import Product from "@/models/Product";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import User from "@/models/User";
+import Notification from "@/models/Notification";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -67,6 +68,17 @@ export async function POST(req: Request) {
             paymentProof,
             status: 'en_attente' // Wait for admin verification
         });
+
+        // Notify Admins
+        const admins = await User.find({ role: 'admin' });
+        for (const admin of admins) {
+            await Notification.create({
+                recipient: admin._id,
+                type: 'new_order',
+                message: `Nouvelle commande (${order._id.toString().slice(-6)}) reçue. Montant: ${totalAmount}€`,
+                link: '/admin/orders'
+            });
+        }
 
         return NextResponse.json({ message: "Order created", order }, { status: 201 });
 

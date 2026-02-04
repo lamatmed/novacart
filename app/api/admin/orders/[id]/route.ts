@@ -5,6 +5,7 @@ import Product from "@/models/Product";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import User from "@/models/User";
+import Notification from "@/models/Notification";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -56,6 +57,16 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
             { status },
             { new: true }
         );
+
+        // Notify User
+        if (existingOrder.status !== status) {
+            await Notification.create({
+                recipient: existingOrder.user,
+                type: 'order_status',
+                message: `Votre commande #${existingOrder._id.toString().slice(-6)} est passée au statut : ${status.replace('_', ' ').toUpperCase()}`,
+                link: '/profile'
+            });
+        }
 
         return NextResponse.json({ message: "Order updated", order: updatedOrder });
     } catch (error) {

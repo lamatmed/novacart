@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import React, { useState } from "react";
@@ -6,14 +5,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { motion } from "framer-motion";
-import { Mail, Lock, Loader2, ArrowRight } from "lucide-react";
+import { Mail, Lock, User, Loader2, ArrowRight } from "lucide-react";
 
-export default function LoginPage() {
+export default function RegisterPage() {
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const { login } = useAuth();
+    const { register } = useAuth();
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -22,11 +22,11 @@ export default function LoginPage() {
         setError("");
 
         try {
-            const success = await login({ email, password });
+            const success = await register({ name, email, password });
             if (success) {
                 router.push("/");
             } else {
-                setError("Email ou mot de passe incorrect");
+                setError("L'inscription a échoué. Veuillez réessayer.");
             }
         } catch (err) {
             setError("Une erreur est survenue. Veuillez réessayer.");
@@ -46,10 +46,10 @@ export default function LoginPage() {
                 <div className="bg-white rounded-2xl shadow-xl p-8 space-y-8">
                     <div className="text-center space-y-2">
                         <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-                            Bon retour
+                            Créer un compte
                         </h1>
                         <p className="text-gray-500">
-                            Entrez vos identifiants pour accéder à votre compte
+                            Entrez vos coordonnées pour commencer
                         </p>
                     </div>
 
@@ -67,6 +67,27 @@ export default function LoginPage() {
                         <div className="space-y-4">
                             <div className="space-y-2">
                                 <label
+                                    htmlFor="name"
+                                    className="text-sm font-medium text-gray-700 block"
+                                >
+                                    Nom complet
+                                </label>
+                                <div className="relative">
+                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                                    <input
+                                        id="name"
+                                        type="text"
+                                        required
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all placeholder:text-gray-400"
+                                        placeholder="John Doe"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label
                                     htmlFor="email"
                                     className="text-sm font-medium text-gray-700 block"
                                 >
@@ -80,27 +101,19 @@ export default function LoginPage() {
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all placeholder:text-gray-400 text-black font-medium"
+                                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all placeholder:text-gray-400"
                                         placeholder="name@example.com"
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <label
-                                        htmlFor="password"
-                                        className="text-sm font-medium text-gray-700 block"
-                                    >
-                                        Mot de passe
-                                    </label>
-                                    <Link
-                                        href="/forgot-password"
-                                        className="text-xs font-semibold text-gray-600 hover:text-black transition-colors"
-                                    >
-                                        Mot de passe oublié ?
-                                    </Link>
-                                </div>
+                                <label
+                                    htmlFor="password"
+                                    className="text-sm font-medium text-gray-700 block"
+                                >
+                                    Mot de passe
+                                </label>
                                 <div className="relative">
                                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                                     <input
@@ -109,8 +122,8 @@ export default function LoginPage() {
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all placeholder:text-gray-400 text-black font-medium"
-                                        placeholder="••••••••"
+                                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all placeholder:text-gray-400"
+                                        placeholder="Créez un mot de passe"
                                     />
                                 </div>
                             </div>
@@ -125,32 +138,19 @@ export default function LoginPage() {
                                 <Loader2 className="w-5 h-5 animate-spin" />
                             ) : (
                                 <>
-                                    Se connecter <ArrowRight className="w-4 h-4" />
+                                    Créer le compte <ArrowRight className="w-4 h-4" />
                                 </>
                             )}
                         </button>
                     </form>
 
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t border-gray-200" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-white px-2 text-gray-500">
-                                Ou continuer avec
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Social login buttons could go here */}
-
                     <div className="text-center text-sm text-gray-500">
-                        Vous n'avez pas de compte ?{" "}
+                        Vous avez déjà un compte ?{" "}
                         <Link
-                            href="/register"
+                            href="/login"
                             className="font-semibold text-black hover:underline"
                         >
-                            S'inscrire
+                            Se connecter
                         </Link>
                     </div>
                 </div>

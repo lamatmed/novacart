@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { ShoppingCart, ChevronLeft, ChevronRight, Tag } from "lucide-react";
+import Link from 'next/link';
+import { ShoppingCart, ChevronLeft, ChevronRight, Tag, Eye } from "lucide-react";
 import { useCart } from "@/components/providers/CartProvider";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -82,6 +83,16 @@ export default function ProductCard({ product }: ProductCardProps) {
                         </motion.div>
                     </AnimatePresence>
                 )}
+
+                <div className={`absolute top-4 right-4 z-20 flex flex-col gap-2 transition-all duration-300 ${isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}`}>
+                    <Link
+                        href={`/product/${product._id}`}
+                        className="w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white hover:text-purple-600 transition-colors text-gray-700 hover:scale-110 transform"
+                        title="Voir les détails"
+                    >
+                        <Eye className="w-5 h-5" />
+                    </Link>
+                </div>
 
                 {/* Stock Overlay */}
                 {product.stock <= 0 && (

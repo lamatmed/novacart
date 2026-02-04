@@ -249,7 +249,7 @@ export default function Home() {
                 onMouseEnter={() => setHoveredCategory(index)}
                 onMouseLeave={() => setHoveredCategory(null)}
               >
-                <Link href={`/categories/${category.name.toLowerCase().replace(/ /g, '-')}`}>
+                <Link href={`/category/${category.name.toLowerCase()}`}>
                   <div className="absolute inset-0 bg-gradient-to-br via-white/0 to-white/0 z-10" />
                   <div className={`absolute inset-0 bg-gradient-to-br ${category.color} transition-opacity duration-500 ${hoveredCategory === index ? 'opacity-100' : 'opacity-60'
                     }`} />
@@ -344,9 +344,9 @@ export default function Home() {
                       <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow">
                         <Heart className="w-5 h-5 text-gray-600 hover:text-red-500" />
                       </button>
-                      <Link href={`/product/${product.id}`} className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                      <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow">
                         <Eye className="w-5 h-5 text-gray-600 hover:text-purple-600" />
-                      </Link>
+                      </button>
                     </div>
                   </div>
 
@@ -372,11 +372,9 @@ export default function Home() {
                       )}
                     </div>
 
-                    <Link href={`/product/${product.id}`}>
-                      <h3 className="text-xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors">
-                        {product.name}
-                      </h3>
-                    </Link>
+                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors">
+                      {product.name}
+                    </h3>
 
                     <div className="flex items-center justify-between">
                       <span className="text-2xl font-bold text-gray-900">{product.price}</span>
