@@ -34,6 +34,7 @@ const OrderSchema = new mongoose.Schema({
         city: String,
         postalCode: String,
         country: String,
+        phone: String,
     },
     createdAt: {
         type: Date,

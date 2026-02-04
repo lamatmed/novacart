@@ -78,7 +78,12 @@ export default function AdminDashboard() {
                                 recentOrders.map((order: any) => (
                                     <tr key={order._id} className="hover:bg-gray-50">
                                         <td className="px-4 py-3 font-medium text-black">#{order._id.slice(-6)}</td>
-                                        <td className="px-4 py-3 text-black">{order.user?.name || "Invité"}</td>
+                                        <td className="px-4 py-3 text-black">
+                                            <div className="font-medium">{order.user?.name || "Invité"}</div>
+                                            {order.shippingAddress?.phone && (
+                                                <div className="text-xs text-gray-500">{order.shippingAddress.phone}</div>
+                                            )}
+                                        </td>
                                         <td className="px-4 py-3 font-semibold text-black">{order.totalAmount}€</td>
                                         <td className="px-4 py-3">
                                             <span className={`px-2 py-1 rounded-full text-xs font-medium 
@@ -88,7 +93,12 @@ export default function AdminDashboard() {
                                                 {order.status}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-3 text-black text-sm">{new Date(order.createdAt).toLocaleDateString()}</td>
+                                        <td className="px-4 py-3 text-black text-sm">
+                                            <div className="flex flex-col">
+                                                <span>{new Date(order.createdAt).toLocaleDateString('fr-FR')}</span>
+                                                <span className="text-xs text-gray-500">{new Date(order.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
+                                            </div>
+                                        </td>
                                     </tr>
                                 ))
                             )}

@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useCart } from "@/components/providers/CartProvider";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart, Menu, X, User as UserIcon, Search, LogOut, Package, Bell, ChevronDown, Sparkles, Gift, Tag, Home, Grid, Info } from "lucide-react";
+import { ShoppingCart, Menu, X, User as UserIcon, Search, LogOut, Package, Bell, ChevronDown, Sparkles, Gift, Tag, Home, Grid } from "lucide-react";
 import clsx from "clsx";
 
 export default function Navbar() {
@@ -69,8 +69,8 @@ export default function Navbar() {
     const navLinks = [
         { name: "Accueil", href: "/", icon: Home },
         { name: "Boutique", href: "/shop", icon: Grid },
+        { name: "Catégories", href: "/categories", icon: ChevronDown },
         { name: "Offres", href: "/deals", icon: Tag },
-        { name: "Infos", href: "/about", icon: Info },
     ];
 
     const categories = [
@@ -225,9 +225,46 @@ export default function Navbar() {
                                     )}
                                 </button>
 
+                                <AnimatePresence>
+                                    {isNotificationsOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            className="absolute top-full right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 origin-top-right"
+                                        >
+                                            <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                                                <h3 className="font-bold text-gray-900">Notifications</h3>
+                                                {unreadCount > 0 && (
+                                                    <button onClick={markAllRead} className="text-xs text-purple-600 hover:underline font-medium">
+                                                        Tout marquer comme lu
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div className="max-h-80 overflow-y-auto">
+                                                {notifications.length === 0 ? (
+                                                    <div className="p-8 text-center text-gray-500 text-sm">
+                                                        Aucune notification.
+                                                    </div>
+                                                ) : (
+                                                    notifications.map((notif: any) => (
+                                                        <div key={notif._id} className={`p-4 border-b border-gray-50 hover:bg-gray-50 transition-colors ${!notif.read ? 'bg-purple-50/30' : ''}`}>
+                                                            <div className="flex gap-3">
+                                                                <div className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${!notif.read ? 'bg-purple-500' : 'bg-gray-300'}`} />
+                                                                <div className="flex-1">
+                                                                    <p className="text-sm text-gray-800 leading-snug mb-1">{notif.message}</p>
+                                                                    <span className="text-xs text-gray-400">{new Date(notif.createdAt).toLocaleDateString()}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ))
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
                         )}
-
 
                         {/* Cart */}
                         <button
@@ -541,80 +578,6 @@ export default function Navbar() {
                             </div>
                         </div>
                     </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* Notification Sidebar */}
-            <AnimatePresence>
-                {isNotificationsOpen && (
-                    <>
-                        {/* Backdrop */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setIsNotificationsOpen(false)}
-                            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60]"
-                        />
-
-                        {/* Sidebar */}
-                        <motion.div
-                            initial={{ x: "100%" }}
-                            animate={{ x: 0 }}
-                            exit={{ x: "100%" }}
-                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white shadow-2xl z-[60] flex flex-col"
-                        >
-                            {/* Header */}
-                            <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-                                <div className="flex items-center gap-2">
-                                    <Bell className="w-5 h-5 text-purple-600" />
-                                    <h3 className="font-bold text-lg text-gray-900">Notifications</h3>
-                                </div>
-                                <div className="flex items-center gap-4">
-                                    {unreadCount > 0 && (
-                                        <button onClick={markAllRead} className="text-xs text-purple-600 hover:underline font-bold">
-                                            Tout lu
-                                        </button>
-                                    )}
-                                    <button
-                                        onClick={() => setIsNotificationsOpen(false)}
-                                        className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500"
-                                    >
-                                        <X className="w-5 h-5" />
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Content */}
-                            <div className="flex-1 overflow-y-auto">
-                                {notifications.length === 0 ? (
-                                    <div className="h-full flex flex-col items-center justify-center text-center space-y-4 text-gray-500 p-8">
-                                        <Bell className="w-16 h-16 opacity-20" />
-                                        <p className="text-lg font-medium">Aucune notification</p>
-                                        <p className="text-sm">Vous êtes à jour !</p>
-                                    </div>
-                                ) : (
-                                    <div className="divide-y divide-gray-50">
-                                        {notifications.map((notif: any) => (
-                                            <div
-                                                key={notif._id}
-                                                className={`p-5 hover:bg-gray-50 transition-all ${!notif.read ? 'bg-purple-50/40' : ''}`}
-                                            >
-                                                <div className="flex gap-4">
-                                                    <div className={`mt-1.5 w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-sm ${!notif.read ? 'bg-purple-500 ring-4 ring-purple-100' : 'bg-gray-300'}`} />
-                                                    <div className="flex-1 space-y-1">
-                                                        <p className="text-sm text-gray-800 leading-relaxed">{notif.message}</p>
-                                                        <p className="text-xs text-gray-400 font-medium">{new Date(notif.createdAt).toLocaleDateString()} • {new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </motion.div>
-                    </>
                 )}
             </AnimatePresence>
 

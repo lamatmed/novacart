@@ -146,7 +146,6 @@ export default function AdminOrdersPage() {
             alternateRowStyles: { fillColor: [243, 244, 246] },
         });
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const finalY = doc.lastAutoTable.finalY || 80;
 
@@ -254,10 +253,10 @@ export default function AdminOrdersPage() {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="font-bold text-gray-900">{order.user?.name || "Guest"}</div>
+                                        <div className="font-bold text-gray-900">{order.shippingAddress?.phone || order.user?.name || "Guest"}</div>
                                         <div className="text-xs text-gray-600 font-medium">{order.user?.email}</div>
                                         {order.shippingAddress?.phone && (
-                                            <div className="text-xs text-gray-800 font-semibold mt-0.5">{order.shippingAddress.phone}</div>
+                                            <div className="text-xs text-gray-500">{order.user?.name || "Guest"}</div>
                                         )}
                                         <div className="text-xs text-gray-400 mt-1">
                                             {order.shippingAddress?.city}, {order.shippingAddress?.country}
@@ -356,10 +355,10 @@ export default function AdminOrdersPage() {
 
                             {/* User & Shipping */}
                             <div className="space-y-1 relative">
-                                <p className="text-sm font-bold text-gray-900">{order.user?.name || "Guest"}</p>
+                                <p className="text-sm font-bold text-gray-900">{order.shippingAddress?.phone || order.user?.name || "Guest"}</p>
                                 <p className="text-xs text-gray-600 font-medium">{order.user?.email}</p>
                                 {order.shippingAddress?.phone && (
-                                    <p className="text-xs text-gray-800 font-semibold">{order.shippingAddress.phone}</p>
+                                    <p className="text-xs text-gray-500 font-semibold">{order.user?.name || "Guest"}</p>
                                 )}
                                 <p className="text-xs text-gray-500 flex items-center gap-1">
                                     <Truck className="w-3 h-3" />

@@ -30,7 +30,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         await connectDB();
         const { id } = await params;
         const body = await req.json();
-        const { status } = body;
+        const { status, shippingAddress } = body;
 
         const existingOrder = await Order.findById(id);
         if (!existingOrder) {
@@ -54,7 +54,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
         const updatedOrder = await Order.findByIdAndUpdate(
             id,
-            { status },
+            {
+                status: status || existingOrder.status,
+                ...(shippingAddress && { shippingAddress: { ...existingOrder.shippingAddress, ...shippingAddress } })
+            },
             { new: true }
         );
 
