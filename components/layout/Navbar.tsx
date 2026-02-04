@@ -20,6 +20,7 @@ export default function Navbar() {
     const [notifications, setNotifications] = useState<any[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+    const [isMobileNotificationsOpen, setIsMobileNotificationsOpen] = useState(false);
 
     useEffect(() => {
         if (!isAuthenticated) return;
@@ -476,10 +477,54 @@ export default function Navbar() {
                                                 </Link>
                                             )}
 
-                                            <button className="p-4 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 flex flex-col items-center justify-center">
-                                                <Bell className="w-6 h-6 text-gray-600 mb-2" />
-                                                <span className="font-semibold text-gray-600">Notifications</span>
-                                            </button>
+                                            <div className={`col-span-2 transition-all duration-300`}>
+                                                <button
+                                                    onClick={() => setIsMobileNotificationsOpen(!isMobileNotificationsOpen)}
+                                                    className="w-full p-4 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 flex flex-col items-center justify-center relative"
+                                                >
+                                                    <Bell className="w-6 h-6 text-gray-600 mb-2" />
+                                                    <span className="font-semibold text-gray-600">
+                                                        Notifications {unreadCount > 0 && `(${unreadCount})`}
+                                                    </span>
+                                                    {unreadCount > 0 && (
+                                                        <span className="absolute top-3 right-4 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
+                                                    )}
+                                                </button>
+
+                                                <AnimatePresence>
+                                                    {isMobileNotificationsOpen && (
+                                                        <motion.div
+                                                            initial={{ opacity: 0, height: 0 }}
+                                                            animate={{ opacity: 1, height: "auto" }}
+                                                            exit={{ opacity: 0, height: 0 }}
+                                                            className="mt-2 bg-white rounded-xl border border-gray-100 overflow-hidden"
+                                                        >
+                                                            <div className="p-3 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                                                                <span className="text-xs font-bold text-gray-500 uppercase">Récents</span>
+                                                                {unreadCount > 0 && (
+                                                                    <button onClick={markAllRead} className="text-xs text-purple-600 hover:underline font-medium">
+                                                                        Tout lu
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                            <div className="max-h-60 overflow-y-auto">
+                                                                {notifications.length === 0 ? (
+                                                                    <div className="p-4 text-center text-gray-500 text-sm">
+                                                                        Aucune notification.
+                                                                    </div>
+                                                                ) : (
+                                                                    notifications.map((notif: any) => (
+                                                                        <div key={notif._id} className={`p-3 border-b border-gray-50 text-left ${!notif.read ? 'bg-purple-50/30' : ''}`}>
+                                                                            <p className="text-sm text-gray-800 leading-snug mb-1">{notif.message}</p>
+                                                                            <span className="text-xs text-gray-400">{new Date(notif.createdAt).toLocaleDateString()}</span>
+                                                                        </div>
+                                                                    ))
+                                                                )}
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+                                            </div>
 
                                             <button
                                                 onClick={() => {

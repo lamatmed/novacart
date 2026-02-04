@@ -206,7 +206,7 @@ export default function AdminProductsPage() {
             {/* Add Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-2xl w-full max-w-lg p-6 space-y-6">
+                    <div className="bg-white rounded-2xl w-full max-w-lg p-5 sm:p-6 space-y-5 sm:space-y-6 max-h-[90vh] overflow-y-auto shadow-2xl">
                         <h2 className="text-2xl font-bold text-gray-900">{editingId ? "Modifier un produit" : "Ajouter un produit"}</h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
@@ -228,7 +228,7 @@ export default function AdminProductsPage() {
                                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                                 />
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Prix</label>
                                     <input
