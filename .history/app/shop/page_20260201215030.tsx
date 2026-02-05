@@ -84,7 +84,7 @@ function ShopContent() {
                             <input
                                 type="text"
                                 placeholder="Rechercher..."
-                                className="pl-10 pr-4 py-2 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 w-full sm:w-64 text-gray-700"
+                                className="pl-10 pr-4 py-2 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 w-full sm:w-64"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                             />

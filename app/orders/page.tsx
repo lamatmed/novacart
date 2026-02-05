@@ -94,7 +94,12 @@ export default function UserOrdersPage() {
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Date</p>
-                                            <p className="text-sm font-medium text-gray-900">{new Date(order.createdAt).toLocaleDateString()}</p>
+                                            <div className="text-sm font-medium text-gray-900">
+                                                <div>{new Date(order.createdAt).toLocaleDateString('fr-FR')}</div>
+                                                <div className="text-xs text-gray-500 font-normal">
+                                                    {new Date(order.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                                                </div>
+                                            </div>
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Total</p>

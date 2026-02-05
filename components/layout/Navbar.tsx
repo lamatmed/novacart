@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useCart } from "@/components/providers/CartProvider";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,6 +17,8 @@ export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
     const pathname = usePathname();
+    const router = useRouter();
+    const [searchQuery, setSearchQuery] = useState("");
 
     const [notifications, setNotifications] = useState<any[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -200,15 +202,23 @@ export default function Navbar() {
                     {/* Actions */}
                     <div className="flex items-center gap-2">
                         {/* Search */}
+                        {/* Search */}
                         <div className="hidden md:flex items-center bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl px-4 py-3 group focus-within:bg-white focus-within:ring-2 focus-within:ring-purple-500 focus-within:shadow-lg">
                             <Search className="w-5 h-5 text-gray-400 group-focus-within:text-purple-500" />
                             <input
                                 type="text"
                                 placeholder="Rechercher des produits..."
                                 className="ml-3 bg-transparent outline-none text-sm w-48 placeholder-gray-400 text-gray-800"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        router.push(`/shop?search=${encodeURIComponent(searchQuery)}`);
+                                    }
+                                }}
                             />
                             <kbd className="hidden lg:inline-flex ml-2 px-2 py-1 text-xs font-semibold text-gray-500 bg-white border border-gray-200 rounded">
-                                ⌘K
+                                ↵
                             </kbd>
                         </div>
 
@@ -368,6 +378,14 @@ export default function Navbar() {
                                         type="text"
                                         placeholder="Rechercher..."
                                         className="ml-3 bg-transparent outline-none flex-1 placeholder-gray-400 text-gray-700"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                router.push(`/shop?search=${encodeURIComponent(searchQuery)}`);
+                                                setIsMobileMenuOpen(false);
+                                            }
+                                        }}
                                     />
                                 </div>
                             </div>

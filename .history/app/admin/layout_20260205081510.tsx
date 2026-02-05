@@ -194,8 +194,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             </button>
                             <div className="w-px h-6 bg-gray-200"></div>
                             <div className="hidden md:flex flex-col text-right">
-                                <span className="text-sm font-medium text-gray-700">{user.name || 'Admin'}</span>
-                                <span className="text-xs text-green-500">En ligne</span>
+                                <span className="text-sm font-medium">{user.name || 'Admin'}</span>
+                                <span className="text-xs text-gray-900">En ligne</span>
                             </div>
                         </div>
                     </div>

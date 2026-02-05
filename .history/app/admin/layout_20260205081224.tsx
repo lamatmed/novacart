@@ -121,7 +121,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </nav>
 
                 {/* Sidebar Footer */}
-                <div className="p-4 border-t border-gray-200/50 space-y-2">
+                <div className="p-4 border-t border-gray-200/50 space-y-2 text-g">
                     <Link 
                         href="/" 
                         className={`flex items-center gap-3 text-gray-500 hover:text-gray-900 px-4 py-3 rounded-xl transition-all hover:bg-gray-50/50 group ${isSidebarCollapsed ? 'justify-center px-3' : ''}`}
@@ -182,7 +182,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 <input
                                     type="text"
                                     placeholder="Rechercher..."
-                                    className="w-full pl-12 pr-4 py-2.5 bg-gray-100/50 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:bg-white text-gray-600"
+                                    className="w-full pl-12 pr-4 py-2.5 bg-gray-100/50 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:bg-white"
                                 />
                             </div>
                         </div>
@@ -194,8 +194,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             </button>
                             <div className="w-px h-6 bg-gray-200"></div>
                             <div className="hidden md:flex flex-col text-right">
-                                <span className="text-sm font-medium text-gray-700">{user.name || 'Admin'}</span>
-                                <span className="text-xs text-green-500">En ligne</span>
+                                <span className="text-sm font-medium">{user.name || 'Admin'}</span>
+                                <span className="text-xs text-gray-400">En ligne</span>
                             </div>
                         </div>
                     </div>
